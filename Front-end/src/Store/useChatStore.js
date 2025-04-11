@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import toast from "react-hot-toast";
-import { axiosInstance } from "../lib/axois.js";
+import { axiosInstance } from "../lib/axios.js";
 import { useAuthStore } from "./UseAuthStore";
 
 export const useChatStore = create((set, get) => ({
@@ -57,19 +57,31 @@ export const useChatStore = create((set, get) => ({
     }
   },
 
-  subscribeToMessages: () => {
-    const socket = useAuthStore.getState().socket;
-    if (!socket) return;
-
-    socket.on("newMessage", (newMessage) => {
-      const isMessageSentFromSelectedUser = newMessage.senderId === selectedUser._id;
-      if (!isMessageSentFromSelectedUser) return;
-      console.log("New message received:", newMessage);
-      set((state) => ({
-        messages: [...state.messages, newMessage],
-      }));
-    });
-  },
+  subscribeToMessages: async (selectedUser) => {
+     // Get socket from Zustand store
+     const { socket } = useAuthStore.getState();
+   
+     // Check if Selecteduser and socket dey defined
+     if (!selectedUser || !socket) return;
+   
+     // Remove previous event listener to avoid duplication
+     socket.off("newMessage");
+   
+     // Add new event listener for "newMessage"
+     socket.on("newMessage", (newMessage) => {
+       // Check if message dey from Selecteduser
+       const isMessageFromSelectedUser = newMessage.senderId === selectedUser._id;
+       if (!isMessageFromSelectedUser) return;
+   
+       // Log the new message
+       console.log("New message received:", newMessage);
+   
+       // Update messages state
+       set((state) => ({
+         messages: [...state.messages, newMessage],
+       }));
+     });
+   },
 
   unsubscribeFromMessages: () => {
     const socket = useAuthStore.getState().socket;

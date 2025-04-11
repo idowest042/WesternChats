@@ -82,7 +82,7 @@ const Login = () => {
                         <button type="submit" className="btn btn-primary w-full text-xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary" onClick={handleSubmit} disabled={isLoggingIn}>
                             {isLoggingIn ? (
                                 <>
-                                    <Loader2 className="size-5 animate-spin"/>
+                                    <Loader2 className="loading loading-dots loading-xl"/>
                                     Loading ...
                                 </>
                             ) : (
