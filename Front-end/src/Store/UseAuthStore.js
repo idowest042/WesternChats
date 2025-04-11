@@ -64,13 +64,13 @@ export const useAuthStore = create((set, get) => ({
   // Log out the user
   logout: async () => {
     try {
-      await axiosInstance.post("/auth/logout");
+      await axiosInstance.post("/auth/signout");
       set({ authUser: null });
       toast.success("Logout successfully");
       get().disconnectSocket(); // Disconnect socket on logout
     } catch (error) {
       console.error("Logout Error:", error.response?.data || error.message);
-      toast.error(error.response?.data?.msg || "An error occurred");
+      toast.error(error.response.message||error );
     }
   },
 
