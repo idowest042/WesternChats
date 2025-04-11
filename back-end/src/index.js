@@ -26,6 +26,9 @@ if (process.env.NODE_ENV === "production") {
         res.sendFile(path.join(__dirname, "../Front-end", "dist", "index.html"));
       });
 }  
+app.get('/',(req,res)=>{
+  res.send('api working')
+})
 console.log("JWT_SECRET:", process.env.JWT_SECRET);
 
 
