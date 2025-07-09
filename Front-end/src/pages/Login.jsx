@@ -43,7 +43,7 @@ const Login = () => {
                                 <input 
                                     type="email"
                                     className="input input-bordered w-full pl-10"
-                                    placeholder="idowujo@gmail.com"
+                                    placeholder="Email"
                                     value={formData.email}
                                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                                 />
@@ -78,6 +78,7 @@ const Login = () => {
                                 </button>
                             </div>
                         </div>
+                  
                         {error && <div className="text-red-500 text-sm">{error}</div>}
                         <button type="submit" className="btn btn-primary w-full text-xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary" onClick={handleSubmit} disabled={isLoggingIn}>
                             {isLoggingIn ? (

@@ -35,53 +35,75 @@ export const useChatStore = create((set, get) => ({
   },
 
   sendMessage: async (messageData) => {
-    const { selectedUser } = get();
-    const socket = useAuthStore.getState().socket;
+  const { selectedUser } = get();
+  const socket = useAuthStore.getState().socket;
 
-    try {
-      const res = await axiosInstance.post(`/messages/send/${selectedUser._id}`, messageData);
+  try {
+    // Add temporary message with loading status
+    const tempMessage = {
+      ...messageData,
+      _id: Date.now().toString(), // Temporary ID
+      createdAt: new Date(),
+      status: 'sending',
+      senderId: useAuthStore.getState().authUser._id
+    };
 
-      // Emit the message to the backend
-      socket.emit("sendMessage", {
-        senderId: useAuthStore.getState().authUser._id,
-        receiverId: selectedUser._id,
-        message: res.data,
-      });
+    set((state) => ({
+      messages: [...state.messages, tempMessage]
+    }));
 
-      // Update local state instantly
-      set((state) => ({
-        messages: [...state.messages, res.data],
-      }));
-    } catch (error) {
-      toast.error(error.response.data.message);
-    }
-  },
+    const res = await axiosInstance.post(`/messages/send/${selectedUser._id}`, messageData);
 
-  subscribeToMessages: async (selectedUser) => {
-     // Get socket from Zustand store
-     const { socket } = useAuthStore.getState();
-   
-     // Check if Selecteduser and socket dey defined
-     if (!selectedUser || !socket) return;
-   
-     // Remove previous event listener to avoid duplication
-     socket.off("newMessage");
-   
-     // Add new event listener for "newMessage"
-     socket.on("newMessage", (newMessage) => {
-       // Check if message dey from Selecteduser
-       const isMessageFromSelectedUser = newMessage.senderId === selectedUser._id;
-       if (!isMessageFromSelectedUser) return;
-   
-       // Log the new message
-       console.log("New message received:", newMessage);
-   
-       // Update messages state
-       set((state) => ({
-         messages: [...state.messages, newMessage],
-       }));
-     });
-   },
+    // Update the temporary message with real data
+    set((state) => ({
+      messages: state.messages.map(msg => 
+        msg._id === tempMessage._id ? { ...res.data, status: 'sent' } : msg
+      )
+    }));
+
+    socket.emit("sendMessage", {
+      senderId: useAuthStore.getState().authUser._id,
+      receiverId: selectedUser._id,
+      message: { ...res.data, status: 'sent' }
+    });
+
+  } catch (error) {
+    // Update message status to failed
+    set((state) => ({
+      messages: state.messages.map(msg => 
+        msg._id === tempMessage._id ? { ...msg, status: 'failed' } : msg
+      )
+    }));
+    toast.error(error.response.data.message);
+  }
+},
+
+  subscribeToMessages: () => {
+  const { selectedUser } = get();
+  const { socket, authUser } = useAuthStore.getState();
+  
+  if (!selectedUser || !socket) return;
+
+  socket.off("newMessage");
+  
+  socket.on("newMessage", (newMessage) => {
+    // Skip if message is from ourselves (already handled in sendMessage)
+    if (newMessage.senderId === authUser._id) return;
+
+    set((state) => ({
+      messages: [...state.messages, newMessage]
+    }));
+  });
+
+  // Handle message read receipts
+  socket.on("messageRead", ({ messageId }) => {
+    set((state) => ({
+      messages: state.messages.map(msg => 
+        msg._id === messageId ? { ...msg, status: 'read' } : msg
+      )
+    }));
+  });
+},
 
   unsubscribeFromMessages: () => {
     const socket = useAuthStore.getState().socket;
