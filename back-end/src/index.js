@@ -15,7 +15,7 @@ const port = process.env.PORT || 5001;
 const corsOptions = {
   origin: [
     "http://localhost:5173",
-    "https://your-frontend-domain.vercel.app"
+    "https://western-chats.vercel.app"
   ],
   credentials: true
 };
