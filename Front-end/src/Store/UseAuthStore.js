@@ -3,7 +3,7 @@ import { axiosInstance } from "../lib/axios.js"; // Ensure the correct file path
 import toast from "react-hot-toast";
 import { io } from "socket.io-client";
 
-const Base_Url = import.meta.env.MODE === "development" ? "http://localhost:5001" : "/";
+const Base_Url = import.meta.env.MODE === "development" ? "http://localhost:5001" : "https://backend-chat-sigma.vercel.app";
 
 export const useAuthStore = create((set, get) => ({
   authUser: null,
