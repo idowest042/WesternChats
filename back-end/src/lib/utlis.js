@@ -8,7 +8,8 @@ export const generateToken = (userId, res) => {
         maxAge: 7 * 24 * 60 * 60 * 1000,
         httpOnly: true,
         sameSite: "strict",
-        secure: process.env.NODE_ENV !== "development"
+        secure: process.env.NODE_ENV !== "development",
+        domain: '.vercel.app'
     });
 
     console.log("Generated Token:", token);

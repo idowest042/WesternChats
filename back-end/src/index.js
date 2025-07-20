@@ -15,13 +15,15 @@ const port = process.env.PORT || 5001;
 app.use(cors({
   origin: ['http://localhost:5173', 
   'http://localhost:5174',
-  'https://western-chats.vercel.app'
+  'https://western-chats.vercel.app',
+  'https://backend-chat-sigma.vercel.app'
 ],// or wherever your frontend is hosted
   credentials: true
 }));
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ limit: "10mb", extended: true }));
 app.use(cookieParser());
+app.options('*', cors()); // Enable preflight for all routes
 // API Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/messages', messageRoutes);
