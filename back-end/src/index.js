@@ -11,21 +11,34 @@ dotenv.config();
 
 const port = process.env.PORT || 5001;
 
-// CORS Configuration
 app.use(cors({
-  origin: ['http://localhost:5173', 
-  'http://localhost:5174',
-  'https://western-chats.vercel.app',
-  'https://backend-chat-sigma.vercel.app'
-],// or wherever your frontend is hosted
+  origin: [
+    'https://western-chats.vercel.app',
+    'http://localhost:5173',
+    // Add your image CDN domains here, for example:
+    'https://res.cloudinary.com' // If using Cloudinary
+  ],
   credentials: true,
-  allowedHeaders: ['Content-Type', 'Authorization']
+  // Add this to exclude images from credentials requirement:
+  preflightContinue: true // Allows OPTIONS to pass through
 }));
+
+// Special handling for image routes
+app.use('/images', cors({
+  origin: true, // Allow all origins for images
+  credentials: false // No need for credentials
+}));
+// Allow images from Cloudinary/CDN
+app.use((req, res, next) => {
+  if (req.path.match(/\.(jpg|jpeg|png|gif|webp)$/i)) {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET');
+  }
+  next();
+});
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ limit: "10mb", extended: true }));
 app.use(cookieParser());
-app.options('*', cors()); // Enable preflight for all routes
-// API Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/messages', messageRoutes);
 
