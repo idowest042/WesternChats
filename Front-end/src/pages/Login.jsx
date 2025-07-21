@@ -6,20 +6,26 @@ import AuthImagePattern from "../components/AuthImagePattern";
 import toast from "react-hot-toast";
 
 const Login = () => {
-    const [showPassword, setShowPassword] = useState(false)
+    const [showPassword, setShowPassword] = useState(false);
     const [formData, setFormData] = useState({
-        email:'',
-        password:'',
-    })
+        email: '',
+        password: '',
+    });
     const [error, setError] = useState(null);
 
-    const {login, isLoggingIn} = useAuthStore()
-    const handleSubmit = async(e) =>{
-        e.preventDefault()
-        login(formData)
-    }
-    return ( <>
-      <div className="min-h-screen grid lg:grid-cols-2 mt-16">
+    const { login, isLoggingIn } = useAuthStore();
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            await login(formData);
+        } catch (err) {
+            setError(err.message || "Login failed. Please try again.");
+        }
+    };
+
+    return (
+        <div className="min-h-screen grid lg:grid-cols-2 mt-16">
             <div className="flex flex-col p-6 sm:p-12 justify-center items-center">
                 <div className="w-full max-w-md space-y-8">
                     <div className="text-center mb-8">
@@ -40,12 +46,14 @@ const Login = () => {
                                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                     <User className="size-5 text-base-content/40" />
                                 </div>
-                                <input 
+                                <input
                                     type="email"
                                     className="input input-bordered w-full pl-10"
                                     placeholder="Email"
                                     value={formData.email}
                                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                                    required
+                                    disabled={isLoggingIn}
                                 />
                             </div>
                         </div>
@@ -57,34 +65,49 @@ const Login = () => {
                                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                     <Lock className="size-5 text-base-content/40" />
                                 </div>
-                                <input 
+                                <input
                                     type={showPassword ? "text" : "password"}
                                     className="input input-bordered w-full pl-10"
                                     placeholder="**********"
                                     value={formData.password}
                                     onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                                    required
+                                    disabled={isLoggingIn}
                                 />
-                                <button 
-                                    className="absolute inset-y-0 right-0 pr-3 flex items-center" 
+                                <button
+                                    className="absolute inset-y-0 right-0 pr-3 flex items-center"
                                     type="button"
                                     onClick={() => setShowPassword(!showPassword)}
                                     aria-label={showPassword ? "Hide password" : "Show password"}
+                                    disabled={isLoggingIn}
                                 >
                                     {showPassword ? (
-                                        <EyeOff className="size-5 text-base-content/40"/>
+                                        <EyeOff className="size-5 text-base-content/40" />
                                     ) : (
-                                        <Eye className="size-5 text-base-content/40"/>
+                                        <Eye className="size-5 text-base-content/40" />
                                     )}
                                 </button>
                             </div>
                         </div>
-                  
-                        {error && <div className="text-red-500 text-sm">{error}</div>}
-                        <button type="submit" className="btn btn-primary w-full text-xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary" onClick={handleSubmit} disabled={isLoggingIn}>
+
+                        {error && (
+                            <div className="alert alert-error">
+                                <svg xmlns="http://www.w3.org/2000/svg" className="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                <span>{error}</span>
+                            </div>
+                        )}
+
+                        <button
+                            type="submit"
+                            className="btn btn-primary w-full"
+                            disabled={isLoggingIn}
+                        >
                             {isLoggingIn ? (
                                 <>
-                                    <Loader2 className="loading loading-dots loading-xl"/>
-                                    Loading ...
+                                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                    Signing in...
                                 </>
                             ) : (
                                 "Sign in"
@@ -102,12 +125,11 @@ const Login = () => {
                 </div>
             </div>
             <AuthImagePattern
-            title="Join our community"
-            subtitle="Connect with friends, share moments, and stay in touch with Loved ones"
+                title="Join our community"
+                subtitle="Connect with friends, share moments, and stay in touch with loved ones"
             />
-
         </div>
-    </> );
-}
- 
+    );
+};
+
 export default Login;

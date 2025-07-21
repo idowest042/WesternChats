@@ -18,7 +18,8 @@ app.use(cors({
   'https://western-chats.vercel.app',
   'https://backend-chat-sigma.vercel.app'
 ],// or wherever your frontend is hosted
-  credentials: true
+  credentials: true,
+  allowedHeaders: ['Content-Type', 'Authorization']
 }));
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ limit: "10mb", extended: true }));
