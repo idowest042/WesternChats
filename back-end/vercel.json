@@ -1,25 +1,23 @@
 {
   "version": 2,
-  "builds": [{
-    "src": "src/index.js",
-    "use": "@vercel/node"
-  }],
-  "routes": [{
-    "src": "/api/(.*)",
-    "dest": "src/index.js",
-    "headers": {
-      "Access-Control-Allow-Origin": "https://western-chats.vercel.app",
-      "Access-Control-Allow-Methods": "GET,POST,PUT,DELETE,OPTIONS,PATCH",
-      "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Requested-With, X-CSRF-Token",
-      "Access-Control-Allow-Credentials": "true",
-      "Access-Control-Max-Age": "86400"
+  "builds": [
+    {
+      "src": "index.js",
+      "use": "@vercel/node"
     }
-  }],
-  "headers": [{
-    "source": "/socket.io/(.*)",
-    "headers": [
-      { "key": "Access-Control-Allow-Origin", "value": "https://western-chats.vercel.app" },
-      { "key": "Access-Control-Allow-Credentials", "value": "true" }
-    ]
-  }]
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "/index.js"
+    }
+  ],
+  "functions": {
+    "index.js": {
+      "maxDuration": 30
+    }
+  },
+  "env": {
+    "NODE_ENV": "production"
+  }
 }

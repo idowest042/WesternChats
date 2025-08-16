@@ -13,7 +13,7 @@ const Login = () => {
     });
     const [error, setError] = useState(null);
 
-    const { login, isLoggingIn } = useAuthStore();
+    const { login, isLogging } = useAuthStore();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -53,7 +53,7 @@ const Login = () => {
                                     value={formData.email}
                                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                                     required
-                                    disabled={isLoggingIn}
+                                    disabled={isLogging}
                                 />
                             </div>
                         </div>
@@ -72,14 +72,14 @@ const Login = () => {
                                     value={formData.password}
                                     onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                                     required
-                                    disabled={isLoggingIn}
+                                    disabled={isLogging}
                                 />
                                 <button
                                     className="absolute inset-y-0 right-0 pr-3 flex items-center"
                                     type="button"
                                     onClick={() => setShowPassword(!showPassword)}
                                     aria-label={showPassword ? "Hide password" : "Show password"}
-                                    disabled={isLoggingIn}
+                                    disabled={isLogging}
                                 >
                                     {showPassword ? (
                                         <EyeOff className="size-5 text-base-content/40" />
@@ -102,9 +102,9 @@ const Login = () => {
                         <button
                             type="submit"
                             className="btn btn-primary w-full"
-                            disabled={isLoggingIn}
+                            disabled={isLogging}
                         >
-                            {isLoggingIn ? (
+                            {isLogging ? (
                                 <>
                                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                                     Signing in...

@@ -18,7 +18,7 @@ const SignupPage = () => {
         password: ''
     });
 
-    const { signup, isSignUp } = useAuthStore();
+    const { signup, isSignup } = useAuthStore();
 
     const validateField = (name, value) => {
         let error = '';
@@ -116,7 +116,7 @@ const SignupPage = () => {
                                     placeholder="Full Name"
                                     value={formData.fullname}
                                     onChange={handleChange}
-                                    disabled={isSignUp}
+                                    disabled={isSignup}
                                 />
                             </div>
                             {errors.fullname && (
@@ -141,7 +141,7 @@ const SignupPage = () => {
                                     placeholder="Email"
                                     value={formData.email}
                                     onChange={handleChange}
-                                    disabled={isSignUp}
+                                    disabled={isSignup}
                                 />
                             </div>
                             {errors.email && (
@@ -166,14 +166,14 @@ const SignupPage = () => {
                                     placeholder="**********"
                                     value={formData.password}
                                     onChange={handleChange}
-                                    disabled={isSignUp}
+                                    disabled={isSignup}
                                 />
                                 <button 
                                     className="absolute inset-y-0 right-0 pr-3 flex items-center" 
                                     type="button"
                                     onClick={() => setShowPassword(!showPassword)}
                                     aria-label={showPassword ? "Hide password" : "Show password"}
-                                    disabled={isSignUp}
+                                    disabled={isSignup}
                                 >
                                     {showPassword ? (
                                         <EyeOff className="size-5 text-base-content/40"/>
@@ -192,9 +192,9 @@ const SignupPage = () => {
                         <button 
                             type="submit" 
                             className="btn btn-primary w-full mt-6"
-                            disabled={isSignUp}
+                            disabled={isSignup}
                         >
-                            {isSignUp ? (
+                            {isSignup ? (
                                 <>
                                     <Loader2 className="mr-2 h-5 w-5 animate-spin" />
                                     Creating account...
